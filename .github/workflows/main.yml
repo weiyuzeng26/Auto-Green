@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   schedule:
-    - cron: "* * * * *"  
+    - cron: "15 * * * *"  
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -18,6 +18,18 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - id: Roll_dice
+        run: echo "PROCEED=$((RANDOM%2))" >> $GITHUB_ENV
+        shell: bash
+
+      - if: env.PROCEED == '0'
+        name: Cancelling
+        uses: andymckay/cancel-action@0.2
+
+      - if: env.PROCEED == '0'
+        name: Waiting for cancellation
+        run: sleep 60
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
